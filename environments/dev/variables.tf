@@ -8,6 +8,11 @@ variable "region" {
   description = "Región para Cloud Run, Cloud SQL, etc."
   default     = "us-central1"
 }
+variable "zone" {
+  type        = string
+  description = "Zona para recursos regionales (ej. us-central1-a)"
+  default     = "us-central1-a" # Ajusta según tu configuración
+}
 
 variable "bucket_location" {
   type        = string
@@ -21,16 +26,6 @@ variable "storage_class" {
   default     = "STANDARD"
 }
 
-variable "image" {
-  type        = string
-  description = "URL de la imagen para Cloud Run (GCR/Artifact Registry)"
-}
-
-variable "cloud_run_sa" {
-  type        = string
-  description = "Cuenta de servicio para Cloud Run"
-  default     = null
-}
 
 variable "db_password" {
   type        = string

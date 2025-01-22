@@ -51,8 +51,15 @@ module "cloud_sql_dev" {
   private_network   = null
   database_name     = "dev_db"
   db_user           = "dzmonsalve"
-  db_password       =  data.google_secret_manager_secret_version.db_password.secret_data
+  db_password = "temporary-password" # Temporary value to bypass the secret
 }
+
+# data "google_secret_manager_secret_version" "db_password" {
+#   secret  = "db_password"
+#   project = var.project_id
+# }
+
+
 
 # ---------------------------------------------------------------------------
 # Módulo: IAM
