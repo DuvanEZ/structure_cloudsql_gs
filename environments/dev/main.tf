@@ -8,18 +8,14 @@ terraform {
     }
   }
 
-  # Opcional: si usarás un backend remoto (descomenta si aplicas)
-  # backend "gcs" {
-  #   bucket = "mi-terraform-state-bucket"
-  #   prefix = "dev"
-  # }
+
 }
 
 provider "google" {
   project = var.project_id
   region  = var.region
   zone    = var.zone
-  # credentials = file("path/to/service_account.json")  # si lo necesitas
+  # credentials = file("path/to/service_account.json")  
 }
 
 # ---------------------------------------------------------------------------
@@ -30,7 +26,7 @@ module "storage_dev" {
 
   # Nombre del bucket: "glob-gs-csv"
   bucket_name                    = "glob-gs-csv"
-  location                       = var.bucket_location      # Podrías cambiar var.bucket_location a us-east1
+  location                       = var.bucket_location      
   storage_class                  = var.storage_class
   uniform_bucket_level_access    = true
   versioning                     = false
@@ -40,20 +36,6 @@ module "storage_dev" {
   }
 }
 
-# ---------------------------------------------------------------------------
-# Módulo: Cloud Run
-# ---------------------------------------------------------------------------
-module "cloud_run_dev" {
-  source          = "../../modules/cloud-run"
-  project_id      = var.project_id
-  service_name    = "my-cloud-run-service-dev"
-  location        = var.region
-  image           = var.image
-  environment_tag = "dev"
-
-  run_invoker_member = "allUsers"
-  service_account    = var.cloud_run_sa
-}
 
 # ---------------------------------------------------------------------------
 # Módulo: Cloud SQL
@@ -68,6 +50,25 @@ module "cloud_sql_dev" {
   public_ip         = true
   private_network   = null
   database_name     = "dev_db"
-  db_user           = "dev_user"
-  db_password       = var.db_password
+  db_user           = "dzmonsalve"
+  db_password       =  data.google_secret_manager_secret_version.db_password.secret_data
+}
+
+# ---------------------------------------------------------------------------
+# Módulo: IAM
+# ---------------------------------------------------------------------------
+
+module "iam_service_account" {
+  source = "../../modules/iam"
+
+  project_id                    = var.project_id
+  service_account_id            = "terraform-sa"
+  service_account_display_name  = "Terraform Service Account"
+  roles = [
+    "roles/cloudsql.client",       # Acceso a Cloud SQL
+    "roles/cloudsql.editor",       # Permisos para manipular datos
+    "roles/storage.admin",         # Acceso total a Cloud Storage
+    "roles/run.admin",             # Permisos para Cloud Run
+    "roles/iam.serviceAccountUser" # Permite que otros usen esta cuenta
+  ]
 }
