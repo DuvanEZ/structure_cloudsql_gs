@@ -1,0 +1,33 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash log files
+crash.log
+
+# Exclude Terraform lock file (if you prefer to keep it local)
+.terraform.lock.hcl
+
+# .terraform directory
+.terraform/
+
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+
+# Override files (used for local configurations)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# IDE specific files (Visual Studio Code in this case)
+.vscode/
+.idea/
+*.swp
+*.swo
+*.log
+
+# Other unnecessary files
+.DS_Store
+Thumbs.db
